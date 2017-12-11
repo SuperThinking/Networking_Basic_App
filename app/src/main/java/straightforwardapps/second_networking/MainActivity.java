@@ -11,9 +11,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONObject;
 
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     EditText rno;
-    TextView mac, st;
+    TextView mac;
     String mac_add = "AC:C3:3A:DE:F0:B6";
 
     @Override
@@ -48,53 +52,17 @@ public class MainActivity extends AppCompatActivity {
 
         rno = (EditText) findViewById(R.id.rno);
         mac = (TextView) findViewById(R.id.mac);
-        st = (TextView) findViewById(R.id.st);
 
         mac.setText(mac_add);
 
     }
 
-    public void sendshiz(View view) {
-        new SendPostRequest().execute();
+    public void sendshiz(View view)
+    {
+        Intent i = new Intent(this, MainActivity2.class);
+        i.putExtra("mac", mac_add);
+        i.putExtra("reg", rno.getText().toString());
+        startActivity(i);
     }
 
-    public class SendPostRequest extends AsyncTask<String, String, String> {
-
-        String us = rno.getText().toString();
-        String pas = mac.getText().toString();
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try
-            {
-                URL url = new URL("https://android-club-project.herokuapp.com/upload_details?reg_no="+us+"&"+"mac="+pas);
-                HttpURLConnection x = (HttpURLConnection) url.openConnection();
-                x.connect();
-
-                InputStream stream = x.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
-                String line = "";
-                StringBuffer buffer = new StringBuffer( );
-                while((line=reader.readLine())!=null)
-                {
-                    buffer.append(line);
-                }
-                return buffer.toString();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return "IDK";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            st.setText(s);
-        }
-    }
 }
